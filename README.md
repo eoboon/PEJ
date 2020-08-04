@@ -428,14 +428,13 @@ public class PolicyHandler{
 ```
 
 배송시스템은 상품시스템과 완전히 분리되어있으며, 이벤트 수신에 따라 처리되기 때문에, 상품시스템이 유지보수로 인해 잠시 내려간 상태라도 배송처리를 하는데 문제가 없다:
-```
 
 - 상품시스템을 중단후 발주처리시 배송이벤트 발생되지만 처리되지 않다가 
 상품시스템 구동 후 배송이벤트를 수신하여 상품입고 처리가 정상완료 됨을 확인
   ![image](https://user-images.githubusercontent.com/19424600/89307687-552db800-d6ac-11ea-9d6f-4a08aa73a783.png)
   ![image](https://user-images.githubusercontent.com/19424600/89307753-68d91e80-d6ac-11ea-93b8-3f5245083935.png)
   ![image](https://user-images.githubusercontent.com/19424600/89307806-79899480-d6ac-11ea-8d61-363cb625f0e0.png)
-```
+
 
 
 # 운영
@@ -504,15 +503,11 @@ siege 실행 결과 오류 없이 수행됨 : Availability 100%
 
 ### 오토스케일 아웃
 - 배송 서비스에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 15프로를 넘어서면 replica 를 10개까지 늘려준다:
-```
-
   ![image](https://user-images.githubusercontent.com/19424600/89306585-07648000-d6ab-11ea-8f37-2585134c153c.png)
-  
-```
+
 - CB 에서 했던 방식대로 워크로드를 50초 동안 걸어준다.
-```
   ![image](https://user-images.githubusercontent.com/19424600/89314832-1bad7a80-d6b5-11ea-90da-8cb242d6c710.png)
-```
+
 
 - 오토스케일 발생하지 않음(siege 실행 결과 오류 없이 수행됨 : Availability 100%)
 서비스에 복잡한 비즈니스 로직이 포함된 것이 아니어서, CPU 부하를 주지 못한 것으로 추정된다.오토스케일이 어떻게 되고 있는지 모니터링을 걸어둔다:
