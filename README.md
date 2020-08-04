@@ -209,9 +209,7 @@ mvn spring-boot:run
 ```
 package PEJ;
 
-import javax.persistence.*;
-import org.springframework.beans.BeanUtils;
-import java.util.List;
+...
 
 @Entity
 @Table(name="Purchase_table")
@@ -220,22 +218,13 @@ public class Purchase {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
-    private String purchaseId;
-    private String purchaseStatus;
-    private String prdId;
-    private Integer purchaseQty;
-    private Integer purchaseAmt;
-    private String prdNm;
-    private Integer prdPrice;
-    private String custNm;
+...
 
     @PostPersist
     public void onPostPersist(){
         Purchased purchased = new Purchased();
         BeanUtils.copyProperties(this, purchased);
         purchased.publishAfterCommit();
-
-
     }
 
     @PreRemove
@@ -244,17 +233,6 @@ public class Purchase {
         BeanUtils.copyProperties(this, cancelled);
         cancelled.setPurchaseStatus("취소됨");
         cancelled.publishAfterCommit();
-
-
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
 ```
@@ -326,12 +304,7 @@ public interface DeliveryService {
     @PreUpdate
     public void onPreUpdate(){
         if("CANCELLED".equals(this.orderStatus)){
-            System.out.println("orderCanceled.setOrderStatus(\"CANCELLED\")");
-            OrderCanceled orderCanceled = new OrderCanceled();
-            BeanUtils.copyProperties(this, orderCanceled);
-            orderCanceled.setOrderStatus("CANCELLED");
-            orderCanceled.publishAfterCommit();
-
+...
             PEJ.external.Delivery delivery = new PEJ.external.Delivery();
             delivery.setOrderId(orderCanceled.getOrderId());
             delivery.setDeliveryStatus("CANCELLED");
@@ -373,6 +346,7 @@ http PATCH http://localhost:8088/orders/1 orderStatus="CANCELLED" #Success
  
 ```
 package PEJ;
+...
 
 @Entity
 @Table(name="Delivery_table")
