@@ -148,14 +148,19 @@
 - 상품발주 취소시 상품배송 자동 취소 처리 Sync 호출
 
 2. 장애격리
-- 매입매출관리 기능이 수행되지 않더라도 구매는 365일 24시간 가능해야 한다 Async (event-driven), Eventual Consistency
-- 구매가 과중되면 재고변경을 잠시동안 받지 않고 재고변경을 잠시후에 하도록 유도한다 Circuit breaker, fallback (확인필요)
+- 마이페이지 기능이 수행되지 않더라도 구매는 365일 24시간 가능해야 한다 Async (event-driven), Eventual Consistency
+- 발주취소가 과중되면 배송취소를 잠시동안 받지 않고 배송취소를 잠시후에 하도록 유도한다 Circuit breaker, fallback
 
 3. 성능
 - 점장이 주문,판매 화면으로 매입매출을 조회할수 있어야 한다 CQRS
 - 구매가 발생할때 마다 상품재고가 변경될수 있어야 한다 Event driven
 
 
+- 마이크로 서비스를 넘나드는 시나리오에 대한 트랜잭션 처리
+    - 발주취소시 배송취소 처리 : 발주취소는 배송취소가 완료되지 않은 발주취소는 절대 받지 않는다는 편의점본사의 오랜 신념(?) 에 따라, ACID 트랜잭션 적용. 발주취소시 배송취소에 대해서는 Request-Response 방식 처리
+    - 배송완료시 알바가 상품입고처리 :  App(front) 에서 Store 마이크로서비스로 배송완료가 전달되는 과정에 있어서 Store 마이크로 서비스가 별도의 배포주기를 가지기 때문에 Eventual Consistency 방식으로 트랜잭션 처리함.
+    - 나머지 모든 inter-microservice 트랜잭션: 데이터 일관성의 시점이 크리티컬하지 않은 모든 경우가 대부분이라 판단, Eventual Consistency 를 기본으로 채택함.
+    
 
 ## 헥사고날 아키텍처 다이어그램 도출
     
@@ -196,7 +201,9 @@ mvn spring-boot:run
 
 ## DDD 의 적용
 
-- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (purchase 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다. 하지만, 일부 구현에 있어서 영문이 아닌 경우는 실행이 불가능한 경우가 있기 때문에 편의점 업무인 발주처리, 입고처리 등 한글로 설계 후 영문으로 구현하였다.
+- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (purchase 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다. 
+하지만, 일부 구현에 있어서 영문이 아닌 경우는 실행이 불가능한 경우가 있기 때문에 
+편의점 업무인 발주처리, 입고처리 등을 한글로 설계 후 영문으로 구현하였다.
 
 ```
 package PEJ;
@@ -266,47 +273,32 @@ public interface PurchaseRepository extends PagingAndSortingRepository<Purchase,
 ```
 - 적용 후 REST API 의 테스트
 ```
-발주처리
-http POST localhost:8088/orders orderId="1" prdId="111" prdQty=100 prdPrice=1000 prdNm="껌"
+- 발주
+  ![image](https://user-images.githubusercontent.com/19424600/89304692-b5225f80-d6a8-11ea-802b-926b77f2e737.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89304762-cb302000-d6a8-11ea-9ac9-6bee1b295652.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89304808-dc792c80-d6a8-11ea-8547-c8ec4ceae8bc.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89304886-f450b080-d6a8-11ea-8c10-5798d8eb0adb.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89304974-07638080-d6a9-11ea-9288-9cb3cceb8069.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89305031-1cd8aa80-d6a9-11ea-92c4-b00759e51e1a.png)
 
-생성확인
-http localhost:8088/orders
-http localhost:8088/deliveries 
-http localhost:8088/products
 
-마이페이지확인
-http localhost:8088/orderViews
-http localhost:8088/salesViews
+- 발주취소
+  ![image](https://user-images.githubusercontent.com/19424600/89305107-2feb7a80-d6a9-11ea-8e12-6178605d3b04.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89305243-62957300-d6a9-11ea-97e1-a30d9b8f2f6c.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89305303-72ad5280-d6a9-11ea-93b0-79aa95b78ebb.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89305358-81940500-d6a9-11ea-9f60-52e290658565.png)
 
-발주삭제처리
-http PATCH http://localhost:8088/orders/1 orderStatus="CANCELLED"
 
-삭제확인
-http localhost:8088/orders
-http localhost:8088/deliveries 
+- 구매
+  ![image](https://user-images.githubusercontent.com/19424600/89305411-91134e00-d6a9-11ea-844b-8034f6f11eab.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89305531-b6a05780-d6a9-11ea-8261-2ae42cf1bc04.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89305569-c5870a00-d6a9-11ea-90f5-2efc5298f994.png)
 
-마이페이지확인
-http localhost:8088/orderViews
+- 구매취소
+  ![image](https://user-images.githubusercontent.com/19424600/89305637-dcc5f780-d6a9-11ea-9c70-627f41bfacf9.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89305669-e8b1b980-d6a9-11ea-8505-faebf06f5969.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89305716-f6ffd580-d6a9-11ea-8950-7a18a025ecd5.png)
 
-구매
-http POST localhost:8088/purchases purchaseId="11" purchaseStatus="구매" prdId="111" purchaseQty=3 purchaseAmt="3000" prdNm="껌" prdPrice="1000" custNm="구매자"
-
-구매확인
-http localhost:8088/purchases
-http localhost:8088/products
-
-마이페이지확인
-http localhost:8088/salesViews
-
-구매취소
-http DELETE localhost:8088/purchases/1
-
-구매취소확인
-http localhost:8088/purchases
-http localhost:8088/products
-
-마이페이지확인
-http localhost:8088/salesViews
 
 ```
 
@@ -439,20 +431,12 @@ public class PolicyHandler{
 
 배송시스템은 상품시스템과 완전히 분리되어있으며, 이벤트 수신에 따라 처리되기 때문에, 상품시스템이 유지보수로 인해 잠시 내려간 상태라도 배송처리를 하는데 문제가 없다:
 ```
-# 상품 서비스 (product) 를 잠시 내려놓음
 
-#발주처리
-http POST localhost:8088/orders orderId="1" prdId="111" prdQty=100 prdPrice=1000 prdNm="껌"   #Success
-
-#상품상태 확인
-http localhost:8088/products     # 상품상태 안바뀜 확인
-
-#상품 서비스 기동
-cd product
-mvn spring-boot:run
-
-#상품상태 확인
-http localhost:8088/products     # 상품상태 입고완료로 변경 확인
+- 상품시스템을 중단후 발주처리시 배송이벤트 발생되지만 처리되지 않다가 
+상품시스템 구동 후 배송이벤트를 수신하여 상품입고 처리가 정상완료 됨을 확인
+  ![image](https://user-images.githubusercontent.com/19424600/89307687-552db800-d6ac-11ea-9d6f-4a08aa73a783.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89307753-68d91e80-d6ac-11ea-93b8-3f5245083935.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89307806-79899480-d6ac-11ea-8d61-363cb625f0e0.png)
 ```
 
 
@@ -460,7 +444,9 @@ http localhost:8088/products     # 상품상태 입고완료로 변경 확인
 
 ## CI/CD 설정
 
-각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 AWS CodeBuild를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하에 buildspec.yml 에 포함되었다. 아래 Github 소스 코드 변경 시, CodeBuild 빌드/배포가 자동 시작되도록 구성하였다.
+각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 AWS CodeBuild를 사용하였으며, 
+pipeline build script 는 각 프로젝트 폴더 이하에 buildspec.yml 에 포함되었다. 
+아래 Github 소스 코드 변경 시, CodeBuild 빌드/배포가 자동 시작되도록 구성하였다.
 
 https://github.com/zzihi/PEJ_GATEWAY
 https://github.com/zzihi/PEJ_ORDER
@@ -594,44 +580,3 @@ Concurrency:		       96.02
 ```
 
 배포기간 동안 Availability 가 변화없기 때문에 무정지 재배포가 성공한 것으로 확인됨.
-
-## 시연
-- 발주
-  ![image](https://user-images.githubusercontent.com/19424600/89304692-b5225f80-d6a8-11ea-802b-926b77f2e737.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89304762-cb302000-d6a8-11ea-9ac9-6bee1b295652.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89304808-dc792c80-d6a8-11ea-8547-c8ec4ceae8bc.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89304886-f450b080-d6a8-11ea-8c10-5798d8eb0adb.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89304974-07638080-d6a9-11ea-9288-9cb3cceb8069.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89305031-1cd8aa80-d6a9-11ea-92c4-b00759e51e1a.png)
-
-
-- 발주취소
-  ![image](https://user-images.githubusercontent.com/19424600/89305107-2feb7a80-d6a9-11ea-8e12-6178605d3b04.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89305243-62957300-d6a9-11ea-97e1-a30d9b8f2f6c.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89305303-72ad5280-d6a9-11ea-93b0-79aa95b78ebb.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89305358-81940500-d6a9-11ea-9f60-52e290658565.png)
-
-
-- 구매
-  ![image](https://user-images.githubusercontent.com/19424600/89305411-91134e00-d6a9-11ea-844b-8034f6f11eab.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89305531-b6a05780-d6a9-11ea-8261-2ae42cf1bc04.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89305569-c5870a00-d6a9-11ea-90f5-2efc5298f994.png)
-
-- 구매취소
-  ![image](https://user-images.githubusercontent.com/19424600/89305637-dcc5f780-d6a9-11ea-9c70-627f41bfacf9.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89305669-e8b1b980-d6a9-11ea-8505-faebf06f5969.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89305716-f6ffd580-d6a9-11ea-8950-7a18a025ecd5.png)
-
-- 장애격리 
-- 상품시스템을 중단후 발주처리시 배송이벤트 발생되지만 처리되지 않다가 상품시스템 구동 후 배송이벤트를 수신하여 상품입고 처리가 정상완료 됨을 확인
-  ![image](https://user-images.githubusercontent.com/19424600/89307687-552db800-d6ac-11ea-9d6f-4a08aa73a783.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89307753-68d91e80-d6ac-11ea-93b8-3f5245083935.png)
-  ![image](https://user-images.githubusercontent.com/19424600/89307806-79899480-d6ac-11ea-8d61-363cb625f0e0.png)
-  ![image]()
-  ![image]()
-  ![image]()
-  ![image]()
-  ![image]()
-  ![image]()
-  ![image]()
-  ![image]()
