@@ -202,8 +202,12 @@ mvn spring-boot:run
 
 ## DDD 의 적용
 
-- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (purchase 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다. 
+- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (purchase 마이크로 서비스). 
+
+이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다. 
+
 하지만, 일부 구현에 있어서 영문이 아닌 경우는 실행이 불가능한 경우가 있기 때문에 
+
 편의점 업무인 발주처리, 입고처리 등을 한글로 설계 후 영문으로 구현하였다.
 
 ```
@@ -416,14 +420,22 @@ public class PolicyHandler{
 ## CI/CD 설정
 
 각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 AWS CodeBuild를 사용하였으며, 
+
 pipeline build script 는 각 프로젝트 폴더 이하에 buildspec.yml 에 포함되었다. 
+
 아래 Github 소스 코드 변경 시, CodeBuild 빌드/배포가 자동 시작되도록 구성하였다.
 
+
 https://github.com/zzihi/PEJ_GATEWAY
+
 https://github.com/zzihi/PEJ_ORDER
+
 https://github.com/zzihi/PEJ_DELIVERY
+
 https://github.com/zzihi/PEJ_PRODUCT
+
 https://github.com/zzihi/PEJ_PURCHASE
+
 https://github.com/zzihi/PEJ_MYPAGE
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
