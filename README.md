@@ -1,4 +1,4 @@
-![image](https://user-images.githubusercontent.com/19424600/89319264-d5f3b080-d6ba-11ea-8878-bcad6fc7a0e0.png)
+![image](https://user-images.githubusercontent.com/19424600/89319390-01769b00-d6bb-11ea-8c18-242889a63e44.png)
   
 # 편의점 관리 시스템
 
