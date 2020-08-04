@@ -1,6 +1,5 @@
-![image](http://www.newstouch.site/news/photo/202006/7834_7862_450.jpg)
 
-# 편의점 관
+# 편의점 관리 
 
 # Table of contents
 
