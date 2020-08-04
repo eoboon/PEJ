@@ -111,29 +111,30 @@
 
 
 ## Event Storming 결과
-* MSAEz 로 모델링한 이벤트스토밍 결과:  http://msaez.io/#/storming/e9LJG8q1WXc9bg367c14BBHjiMW2/mine/e042a9db3688e173aa4e7f266564151f/-MDls_vVkU86vm4TchDU
+* MSAEz 로 모델링한 이벤트스토밍 결과:  http://msaez.io/#/storming/e9LJG8q1WXc9bg367c14BBHjiMW2/every/e042a9db3688e173aa4e7f266564151f/-MDslrtvSz9qJIM4UShJ
 
 
 ### 완성된 모형
-![image](https://user-images.githubusercontent.com/66579980/89269374-c6ea0f80-d674-11ea-85a4-136d6fa881b4.png)
+![image](https://user-images.githubusercontent.com/19424600/89304585-91f7b000-d6a8-11ea-9bed-daef9c3b3fe9.png)
 
+![image](https://user-images.githubusercontent.com/19424600/89304604-96bc6400-d6a8-11ea-9ff1-ea0186b49fe0.png)
 
 ### 완성본에 대한 기능적/비기능적 요구사항을 커버하는지 검증
 
-![image](https://user-images.githubusercontent.com/66579980/89269366-c5b8e280-d674-11ea-8c22-530d6999fb79.png)
+![image](https://user-images.githubusercontent.com/19424600/89317152-f5d5a500-d6b7-11ea-82a8-c403f2393a28.png)
 
 1. 점장이 상품을 발주 한다. (OK)
 2. 본사가 발주된 상품을 배송 한다. (OK)
 3. 배송이 완료되면 알바가 상품을 입고처리 한다. (OK)
 4. 상품발주시 점장 마이페이지에 주문view, 판매view 추가된다. (OK)
 
-![image](https://user-images.githubusercontent.com/66579980/89269370-c6517900-d674-11ea-9e14-6df7164c3590.png)
+![image](https://user-images.githubusercontent.com/19424600/89317254-169dfa80-d6b8-11ea-8715-d038d295332b.png)
 1. 고객이 상품을 구매한다. (OK)
 2. 상품구매시 상품의 재고가 변경 된다. (OK)
 3. 상품 구매시 점장 마이페이지에 판매view 변경된다. (OK)
 
 
-![image](https://user-images.githubusercontent.com/66579980/89269372-c6ea0f80-d674-11ea-9c29-3c4974c5d634.png)
+![image](https://user-images.githubusercontent.com/19424600/89317334-2d445180-d6b8-11ea-84ba-a57ad5987fb8.png)
 1. 고객이 상품구매를 취소한다. (OK)
 2. 상품구매 취소시 상품의 재고가 변경 된다. (OK)
 3. 상품구매 취소시 점장 마이페이지에 판매view 변경된다. (OK)
@@ -141,7 +142,7 @@
 
 ### 비기능 요구사항에 대한 검증
 
-![image](https://user-images.githubusercontent.com/66579980/89269374-c6ea0f80-d674-11ea-85a4-136d6fa881b4.png)
+![image](https://user-images.githubusercontent.com/19424600/89317410-451bd580-d6b8-11ea-93a8-54f203decd8e.png)
 
 1. 트랜잭션
 - 상품발주 취소시 상품배송 자동 취소 처리 Sync 호출
