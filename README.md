@@ -1,4 +1,5 @@
-
+![image](https://user-images.githubusercontent.com/19424600/89319264-d5f3b080-d6ba-11ea-8878-bcad6fc7a0e0.png)
+  
 # 편의점 관리 시스템
 
 # Table of contents
@@ -126,18 +127,18 @@
 1. 점장이 상품을 발주 한다. (OK)
 2. 본사가 발주된 상품을 배송 한다. (OK)
 3. 배송이 완료되면 알바가 상품을 입고처리 한다. (OK)
-4. 상품발주시 점장 마이페이지에 주문view, 판매view 추가된다. (OK)
+4. 상품발주시 점장의 마이페이지에 발주상세view, 구매상세view 추가된다. (OK)
 
 ![image](https://user-images.githubusercontent.com/19424600/89317254-169dfa80-d6b8-11ea-8715-d038d295332b.png)
 1. 고객이 상품을 구매한다. (OK)
 2. 상품구매시 상품의 재고가 변경 된다. (OK)
-3. 상품 구매시 점장 마이페이지에 판매view 변경된다. (OK)
+3. 상품 구매시 점장 마이페이지에 구매상세view 변경된다. (OK)
 
 
 ![image](https://user-images.githubusercontent.com/19424600/89317334-2d445180-d6b8-11ea-84ba-a57ad5987fb8.png)
 1. 고객이 상품구매를 취소한다. (OK)
 2. 상품구매 취소시 상품의 재고가 변경 된다. (OK)
-3. 상품구매 취소시 점장 마이페이지에 판매view 변경된다. (OK)
+3. 상품구매 취소시 점장 마이페이지에 구매상세view 변경된다. (OK)
 
 
 ### 비기능 요구사항에 대한 검증
