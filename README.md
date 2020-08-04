@@ -273,7 +273,6 @@ public interface PurchaseRepository extends PagingAndSortingRepository<Purchase,
 }
 ```
 - 적용 후 REST API 의 테스트
-```
 - 발주
   ![image](https://user-images.githubusercontent.com/19424600/89304692-b5225f80-d6a8-11ea-802b-926b77f2e737.png)
   ![image](https://user-images.githubusercontent.com/19424600/89304762-cb302000-d6a8-11ea-9ac9-6bee1b295652.png)
@@ -300,8 +299,6 @@ public interface PurchaseRepository extends PagingAndSortingRepository<Purchase,
   ![image](https://user-images.githubusercontent.com/19424600/89305669-e8b1b980-d6a9-11ea-8505-faebf06f5969.png)
   ![image](https://user-images.githubusercontent.com/19424600/89305716-f6ffd580-d6a9-11ea-8950-7a18a025ecd5.png)
 
-
-```
 
 
 ## 동기식 호출 과 Fallback 처리
