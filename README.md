@@ -197,7 +197,6 @@ mvn spring-boot:run
 cd gateway
 mvn spring-boot:run  
 
-- EKS : CI/CD 통해 빌드/배포 ("운영 > CI-CD 설정" 부분 참조)
 ```
 
 ## DDD 의 적용
@@ -417,26 +416,6 @@ public class PolicyHandler{
 
 # 운영
 
-## CI/CD 설정
-
-각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 AWS CodeBuild를 사용하였으며, 
-
-pipeline build script 는 각 프로젝트 폴더 이하에 buildspec.yml 에 포함되었다. 
-
-아래 Github 소스 코드 변경 시, CodeBuild 빌드/배포가 자동 시작되도록 구성하였다.
-
-
-https://github.com/zzihi/PEJ_GATEWAY
-
-https://github.com/zzihi/PEJ_ORDER
-
-https://github.com/zzihi/PEJ_DELIVERY
-
-https://github.com/zzihi/PEJ_PRODUCT
-
-https://github.com/zzihi/PEJ_PURCHASE
-
-https://github.com/zzihi/PEJ_MYPAGE
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
@@ -479,7 +458,7 @@ hystrix:
 * 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:
 - 동시사용자 100명
 - 60초 동안 실시
-  ![image](https://user-images.githubusercontent.com/19424600/89306316-a9379d00-d6aa-11ea-89a2-809f6bb484cc.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89314832-1bad7a80-d6b5-11ea-90da-8cb242d6c710.png)
 
 
 siege 실행 결과 오류 없이 수행됨 : Availability 100%
@@ -505,60 +484,10 @@ CPU 부하를 주지 못한 것으로 추정된다.오토스케일이 어떻게 
 ## 무정지 재배포
 
 * 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거함
-
-- seige 로 배포작업 직전에 워크로드를 모니터링 함.
-```
-siege -c100 -t120S -r10 --content-type "application/json" 'http://localhost:8081/orders POST {"item": "chicken"}'
-
-** SIEGE 4.0.5
-** Preparing 100 concurrent users for battle.
-The server is now under siege...
-
-HTTP/1.1 201     0.68 secs:     207 bytes ==> POST http://localhost:8081/orders
-HTTP/1.1 201     0.68 secs:     207 bytes ==> POST http://localhost:8081/orders
-HTTP/1.1 201     0.70 secs:     207 bytes ==> POST http://localhost:8081/orders
-HTTP/1.1 201     0.70 secs:     207 bytes ==> POST http://localhost:8081/orders
-:
-
-```
-
-- 새버전으로의 배포 시작
-```
-kubectl set image ...
-```
-
-- seige 의 화면으로 넘어가서 Availability 가 100% 미만으로 떨어졌는지 확인
-```
-Transactions:		        3078 hits
-Availability:		       70.45 %
-Elapsed time:		       120 secs
-Data transferred:	        0.34 MB
-Response time:		        5.60 secs
-Transaction rate:	       17.15 trans/sec
-Throughput:		        0.01 MB/sec
-Concurrency:		       96.02
-
-```
-배포기간중 Availability 가 평소 100%에서 70% 대로 떨어지는 것을 확인. 원인은 쿠버네티스가 성급하게 새로 올려진 서비스를 READY 상태로 인식하여 서비스 유입을 진행한 것이기 때문. 이를 막기위해 Readiness Probe 를 설정함:
-
-```
-# deployment.yaml 의 readiness probe 의 설정:
-
-
-kubectl apply -f kubernetes/deployment.yaml
-```
+  ![image](https://user-images.githubusercontent.com/19424600/89367812-f3edff00-d714-11ea-9607-2d08c1c351f0.png)
+배포기간중 Availability 가 평소 100%에서 99% 대로 떨어지는 것을 확인. 원인은 쿠버네티스가 성급하게 새로 올려진 서비스를 READY 상태로 인식하여 서비스 유입을 진행한 것이기 때문. 이를 막기위해 Readiness Probe 를 설정함:
 
 - 동일한 시나리오로 재배포 한 후 Availability 확인:
-```
-Transactions:		        3078 hits
-Availability:		       100 %
-Elapsed time:		       120 secs
-Data transferred:	        0.34 MB
-Response time:		        5.60 secs
-Transaction rate:	       17.15 trans/sec
-Throughput:		        0.01 MB/sec
-Concurrency:		       96.02
-
-```
+![image](https://user-images.githubusercontent.com/19424600/89368185-d705fb80-d715-11ea-84e5-2079f6851a1d.png)
 
 배포기간 동안 Availability 가 변화없기 때문에 무정지 재배포가 성공한 것으로 확인됨.
