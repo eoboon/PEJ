@@ -37,8 +37,8 @@
 1. 트랜잭션
     1) 발주 취소시 배송취소가 함께 처리되도록 한다.  Sync 호출 
 2. 장애격리
-    1) 제고변경 처리가 지연되더라도 고객의 구매는 처리할 수 있도록 유도한다.  Async (event-driven), Eventual Consistency
-    2) 배송 시스템에 장애가 발생하더라도 발주 취소는 처리될 수 있도록 한다. (Citcuit breaker, fallback)
+    1) 재고변경 처리가 지연되더라도 고객의 구매는 처리할 수 있도록 유도한다.  Async (event-driven), Eventual Consistency
+    2) 배송 시스템에 장애가 발생하면 발주취소는 잠시뒤에 처리될 수 있도록 한다. (Citcuit breaker, fallback)
 3. 성능
     1. 편의점주는 발주, 배송, 상품 재고, 구매 현황에 대해 확인할 수 있어야 한다  CQRS, Event driven
 
