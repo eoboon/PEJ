@@ -478,12 +478,15 @@ siege 실행 결과 오류 없이 수행됨 : Availability 100%
 
 서비스에 복잡한 비즈니스 로직이 포함된 것이 아니어서, 
 
-CPU 부하를 주지 못한 것으로 추정된다.오토스케일이 어떻게 되고 있는지 모니터링을 걸어둔다:
+CPU 부하를 주지 못한 것으로 추정된다.
 
 
 ## 무정지 재배포
 
 * 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거함
+- 러닝중 이미지 적용
+  ![image](https://user-images.githubusercontent.com/19424600/89368557-cace6e00-d716-11ea-88e2-7394df9e1fb2.png)
+
   ![image](https://user-images.githubusercontent.com/19424600/89367812-f3edff00-d714-11ea-9607-2d08c1c351f0.png)
 배포기간중 Availability 가 평소 100%에서 99% 대로 떨어지는 것을 확인. 원인은 쿠버네티스가 성급하게 새로 올려진 서비스를 READY 상태로 인식하여 서비스 유입을 진행한 것이기 때문. 이를 막기위해 Readiness Probe 를 설정함:
 
