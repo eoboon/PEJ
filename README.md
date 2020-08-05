@@ -321,11 +321,12 @@ public interface DeliveryService {
 - 동기식 호출에서는 호출 시간에 따른 타임 커플링이 발생하며, 배송 시스템이 장애가 나면 주문도 못받는다는 것을 확인:
 
 
-```
+
 # 배송 (delivery) 서비스를 잠시 내려놓음
 
 #발주취소처리
 http PATCH http://localhost:8088/orders/1 orderStatus="CANCELLED" #Fail
+  ![image](https://user-images.githubusercontent.com/19424600/89369385-e9cdff80-d718-11ea-9d12-cd0013969658.png)
 
 #배송서비스 재기동
 cd delivery
@@ -333,7 +334,7 @@ mvn spring-boot:run
 
 #주문처리
 http PATCH http://localhost:8088/orders/1 orderStatus="CANCELLED" #Success
-```
+  ![image](https://user-images.githubusercontent.com/19424600/89369593-8e504180-d719-11ea-90c9-bd87b089c6de.png)
 
 - 또한 과도한 요청시에 서비스 장애가 도미노 처럼 벌어질 수 있다. (서킷브레이커, 폴백 처리는 운영단계에서 설명한다.)
 
