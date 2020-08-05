@@ -458,12 +458,13 @@ hystrix:
 * 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:
 - 동시사용자 100명
 - 60초 동안 실시
-  ![image](https://user-images.githubusercontent.com/19424600/89314832-1bad7a80-d6b5-11ea-90da-8cb242d6c710.png)
+  ![image](https://user-images.githubusercontent.com/19424600/89369124-29481c00-d718-11ea-90c9-ce6c2569e35b.PNG)
+  ![image](https://user-images.githubusercontent.com/19424600/89369123-2816ef00-d718-11ea-9464-7d4f121d9f83.PNG)
 
 
-siege 실행 결과 오류 없이 수행됨 : Availability 100%
+siege 실행 결과  : Availability 96% 확인
 
-서비스에 복잡한 비즈니스 로직이 포함된 것이 아니어서, CPU 부하를 주지 못한 것으로 추정된다.
+
 
 
 ### 오토스케일 아웃
